@@ -8,7 +8,7 @@ const IsWindows = process.platform === 'win32';
 const IsMacOS = process.platform === 'darwin';
 const IsLinux = process.platform === 'linux';
 const is64BitOperatingSystem = process.arch === 'x64';
-const CurrentScriptDirectory = path.basename(__filename);
+const CurrentScriptDirectory = path.dirname(__filename);
 const UniverseDirName = 'uni-osx';
 const VcpgkLibDir = path.join(CurrentScriptDirectory, `vcpkg_installed/${UniverseDirName}`);
 
