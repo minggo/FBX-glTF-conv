@@ -2,12 +2,12 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
-const childProcess = require('child_process');
 
 const IsWindows = process.platform === 'win32';
 const IsMacOS = process.platform === 'darwin';
 const IsLinux = process.platform === 'linux';
 const is64BitOperatingSystem = process.arch === 'x64';
+const CurrentDir = path.dirname(__filename);
 
 const cmakeInstallPrefix = 'out/install';
 let ArtifactPath = '';
@@ -129,7 +129,7 @@ async function installFbxSdk() {
 
 function installDependenciesForMacOS() {
     // Get dependent libraries from `dependencies` in vcpkg.json.
-    const jsObject = JSON.parse(fs.readFileSync('../vcpkg.json', 'utf8'));
+    const jsObject = JSON.parse(fs.readFileSync(`${CurrentDir}/../vcpkg.json`, 'utf8'));
 
     // Download both x86-64 and arm-64 libs and merge them into a uniform binary.
     // https://www.f-ax.de/dev/2022/11/09/how-to-use-vcpkg-with-universal-binaries-on-macos/
