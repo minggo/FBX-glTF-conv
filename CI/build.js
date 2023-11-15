@@ -2,6 +2,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const childProcess = require('child_process');
 
 const IsWindows = process.platform === 'win32';
 const IsMacOS = process.platform === 'darwin';
@@ -58,12 +59,7 @@ function installVcpkg() {
     } else if (IsMacOS || IsLinux) {
         execSync(`./vcpkg/bootstrap-vcpkg.sh`);
         if (IsMacOS) {
-            try {
-                execSync(`xcode-select --install`);
-            } catch (error) {
-                // If xcode tools are already installed, it will generate an error,
-                // this error is good, don't have to handle it.
-            }
+            childProcess.spawnSync('xcode-select', ['--install']);
         }
     } else {
         console.error('vcpkg is not available on target platform.');
