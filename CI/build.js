@@ -8,9 +8,6 @@ const IsWindows = process.platform === 'win32';
 const IsMacOS = process.platform === 'darwin';
 const IsLinux = process.platform === 'linux';
 const is64BitOperatingSystem = process.arch === 'x64';
-const CurrentScriptDirectory = path.dirname(__filename);
-const UniverseDirName = 'uni-osx';
-const VcpgkLibDir = path.join(CurrentScriptDirectory, `vcpkg_installed/${UniverseDirName}`);
 
 const cmakeInstallPrefix = 'out/install';
 let ArtifactPath = '';
@@ -132,8 +129,7 @@ async function installFbxSdk() {
 
 function installDependenciesForMacOS() {
     // Get dependent libraries from `dependencies` in vcpkg.json.
-    const vcpkgJsonPath = path.join(CurrentScriptDirectory, '../vcpkg.json');
-    const jsObject = JSON.parse(fs.readFileSync(vcpkgJsonPath, 'utf8'));
+    const jsObject = JSON.parse(fs.readFileSync('../vcpkg.json', 'utf8'));
 
     // Download both x86-64 and arm-64 libs and merge them into a uniform binary.
     // https://www.f-ax.de/dev/2022/11/09/how-to-use-vcpkg-with-universal-binaries-on-macos/
@@ -142,8 +138,7 @@ function installDependenciesForMacOS() {
         execSync(`./vcpkg/vcpkg install --triplet=x64-osx ${libName}`);
         execSync(`./vcpkg/vcpkg install --triplet=arm64-osx ${libName}`);
     }
-    const mergeScriptPath = path.join(CurrentScriptDirectory, 'lipo-dir-merge.py');
-    execSync(`python3 ${mergeScriptPath} arm64-osx x64-osx ${UniverseDirName}`);
+    execSync(`python3 ./lipo-dir-merge.py ./vcpkg/installed/arm64-osx ./vcpkg/installed/x64-osx ./vcpkg/installed/uni-osx`);
 }
 
 function installDependencies() {
@@ -162,10 +157,11 @@ async function runCMake(buildType) {
     const polyfillsStdFileSystem = IsWindows ? 'OFF' : 'ON';
     const defineVersion = Version ? `-DFBX_GLTF_CONV_CLI_VERSION=${Version}` : '';
 
+    // https://www.f-ax.de/dev/2022/11/09/how-to-use-vcpkg-with-universal-binaries-on-macos/
     if (IsMacOS) {
         execSync(`cmake -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
-                        -DCMAKE_PREFIX_PATH=${VcpgkLibDir}
-                        -DVCPKG_TARGET_TRIPLET=${UniverseDirName}
+                        -DCMAKE_PREFIX_PATH=./vcpkg/installed/uni-osx
+                        -DVCPKG_TARGET_TRIPLET=uni-osx
                         -DCMAKE_OSX_ARCHITECTURES=x86_64;arm64 
                         -DCMAKE_BUILD_TYPE=${buildType} 
                         -DCMAKE_INSTALL_PREFIX=${cmakeInstallPrefix}/${buildType} 
