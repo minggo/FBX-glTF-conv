@@ -142,7 +142,8 @@ function installDependenciesForMacOS() {
         execSync(`./vcpkg/vcpkg install --triplet=x64-osx ${libName}`);
         execSync(`./vcpkg/vcpkg install --triplet=arm64-osx ${libName}`);
     }
-    execSync(`python3 ./lipo-dir-merge.py arm64-osx x64-osx ${UniverseDirName}`);
+    const mergeScriptPath = path.join(CurrentScriptDirectory, 'lipo-dir-merge.py');
+    execSync(`python3 ${mergeScriptPath} arm64-osx x64-osx ${UniverseDirName}`);
 }
 
 function installDependencies() {
