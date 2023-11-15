@@ -58,7 +58,12 @@ function installVcpkg() {
     } else if (IsMacOS || IsLinux) {
         execSync(`./vcpkg/bootstrap-vcpkg.sh`);
         if (IsMacOS) {
-            execSync(`xcode-select --install`);
+            try {
+                execSync(`xcode-select --install`);
+            } catch (error) {
+                // If xcode tools are already installed, it will generate an error,
+                // this error is good, don't have to handle it.
+            }
         }
     } else {
         console.error('vcpkg is not available on target platform.');
