@@ -59,7 +59,7 @@ function installVcpkg() {
     } else if (IsMacOS || IsLinux) {
         execSync(`./vcpkg/bootstrap-vcpkg.sh`);
         if (IsMacOS) {
-            childProcess.spawnSync('xcode-select', ['--install']);
+            // childProcess.spawnSync('xcode-select', ['--install']);
         }
     } else {
         console.error('vcpkg is not available on target platform.');
