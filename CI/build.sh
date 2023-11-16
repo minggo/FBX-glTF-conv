@@ -11,6 +11,20 @@ ArtifactPath=''
 IncludeDebug=false
 Version=''
 
+# check platform
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     IsLinux=true;;
+    Darwin*)    IsMacOS=true;;
+    CYGWIN*)    IsWindows=true;;
+    MINGW*)     IsWindows=true;;
+    *)          ;;
+esac
+
+if [ "$(uname -m)" == "x86_64" ]; then
+    is64BitOperatingSystem=true
+fi
+
 parseArgs() {
     args=("$@")
     for ((i=0; i<${#args[@]}; i++)); do
