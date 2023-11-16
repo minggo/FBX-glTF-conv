@@ -15,8 +15,15 @@ let IncludeDebug = false;
 let Version = '';
 
 function execWithLog(cmd) {
-    const output = execSync(cmd, { stdio: 'inherit' });
-    console.log(output.toString());
+    try {
+        const output = execSync(cmd, { stdio: 'inherit' });
+        if (output) {
+            console.log(output.toString());
+        }
+    } catch (error) {
+        console.error(`Error: ${error.message}`);
+        console.error(`Command stderr: ${error.stderr.toString()}`);
+    }
 }
 
 function parseArgs() {
@@ -182,15 +189,15 @@ async function runCMake(buildType) {
 
     // https://www.f-ax.de/dev/2022/11/09/how-to-use-vcpkg-with-universal-binaries-on-macos/
     if (IsMacOS) {
-        execWithLog(`cmake -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
-                        -DCMAKE_PREFIX_PATH=./vcpkg/installed/uni-osx
-                        -DVCPKG_TARGET_TRIPLET=uni-osx
-                        -DCMAKE_OSX_ARCHITECTURES=x86_64;arm64 
-                        -DCMAKE_BUILD_TYPE=${buildType} 
-                        -DCMAKE_INSTALL_PREFIX=${cmakeInstallPrefix}/${buildType} 
-                        -DFbxSdkHome:STRING=${fbxSdkHome} 
-                        -DPOLYFILLS_STD_FILESYSTEM=${polyfillsStdFileSystem} 
-                        ${defineVersion} 
+        execWithLog(`cmake -DCMAKE_TOOLCHAIN_FILE='vcpkg/scripts/buildsystems/vcpkg.cmake' \
+                        -DCMAKE_PREFIX_PATH='./vcpkg/installed/uni-osx' \
+                        -DVCPKG_TARGET_TRIPLET='uni-osx' \
+                        -DCMAKE_OSX_ARCHITECTURES='x86_64;arm64' \
+                        -DCMAKE_BUILD_TYPE='${buildType}' \
+                        -DCMAKE_INSTALL_PREFIX='${cmakeInstallPrefix}/${buildType}' \
+                        -DFbxSdkHome:STRING='${fbxSdkHome}' \
+                        -DPOLYFILLS_STD_FILESYSTEM=${polyfillsStdFileSystem} \
+                        ${defineVersion} \
                         -S. -B${cmakeBuildDir}`);
     } else {
         execSync(`cmake -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake 
