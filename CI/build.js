@@ -64,7 +64,7 @@ function installVcpkg() {
     }
 }
 
-async function downloadFile(url, dest) {
+function downloadFile(url, dest) {
     const file = fs.createWriteStream(dest);
     return new Promise((resolve, reject) => {
         https.get(url, (response) => {
@@ -94,7 +94,9 @@ async function installFbxSdk() {
         const fbxSdkVersion = '2020.2.1';
         const fbxSdkMacOSTarball = path.join('fbxsdk', 'fbxsdk.pkg.tgz');
         
+        console.log('Start downloading fbx');
         await downloadFile(fbxSdkUrl, fbxSdkMacOSTarball);
+        console.log('End of downloading fbx');
         execSync(`tar -zxvf ${fbxSdkMacOSTarball} -C fbxsdk`);
         const fbxSdkMacOSPkgFile = fs.readdirSync('fbxsdk').find(file => file.endsWith('.pkg'));
         console.log(`FBX SDK MacOS pkg: ${fbxSdkMacOSPkgFile}`);
@@ -128,17 +130,15 @@ async function installFbxSdk() {
 }
 
 function installDependenciesForMacOS() {
-    // Get dependent libraries from `dependencies` in vcpkg.json.
-    const jsObject = JSON.parse(fs.readFileSync(`${CurrentDir}/../vcpkg.json`, 'utf8'));
-
     // Download both x86-64 and arm-64 libs and merge them into a uniform binary.
     // https://www.f-ax.de/dev/2022/11/09/how-to-use-vcpkg-with-universal-binaries-on-macos/
-    for (let i = 0, len = jsObject.length; i < len; ++i) {
-        const libName = jsObject[i];
+    const dependencies = ['libxml2', 'zlib', 'nlohmann-json', 'fmt', 'cppcodec', 'range-v3', 'cxxopts', 'glm', 'doctest', 'utfcpp'];
+    for (let i = 0, len = dependencies.length; i < len; ++i) {
+        const libName = dependencies[i];
         execSync(`./vcpkg/vcpkg install --triplet=x64-osx ${libName}`);
         execSync(`./vcpkg/vcpkg install --triplet=arm64-osx ${libName}`);
     }
-    execSync(`python3 ./lipo-dir-merge.py ./vcpkg/installed/arm64-osx ./vcpkg/installed/x64-osx ./vcpkg/installed/uni-osx`);
+    execSync(`python3 ./CI/lipo-dir-merge.py ./vcpkg/installed/arm64-osx ./vcpkg/installed/x64-osx ./vcpkg/installed/uni-osx`);
 }
 
 function installDependencies() {
