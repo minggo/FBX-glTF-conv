@@ -65,17 +65,30 @@ function installVcpkg() {
 }
 
 function downloadFile(url, dest) {
-    const file = fs.createWriteStream(dest);
     return new Promise((resolve, reject) => {
-        https.get(url, (response) => {
-            response.pipe(file);
-            file.on('finish', () => {
-                file.close();
-                resolve();
-            });
-        }).on('error', (err) => {
+        const file = fs.createWriteStream(dest);
+
+        const request = https.get(url, (response) => {
+            // Check for redirection
+            if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
+                // Follow the redirect
+                downloadFile(response.headers.location, dest)
+                    .then(resolve)
+                    .catch(reject);
+            } else {
+                response.pipe(file);
+                file.on('finish', () => {
+                    file.close();
+                    resolve();
+                });
+            }
+        });
+
+        request.on('error', (err) => {
             fs.unlink(dest, () => reject(err));
         });
+
+        request.end();
     });
 }
 
