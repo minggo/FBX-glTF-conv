@@ -10,9 +10,6 @@ jobs:
   get_release_info_job:
     name: Get Release Info
     runs-on: windows-latest
-    strategy:
-      matrix:
-        node-version: [18.x]
     outputs:
       version: ${{ steps.get_release_info.outputs.version }}
       release_upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -82,6 +79,9 @@ jobs:
     name: Release MacOS
     runs-on: macos-11
     needs: get_release_info_job
+    strategy:
+      matrix:
+        node-version: [18.x]
     steps:
       - name: Print Debug Info
         shell: pwsh
