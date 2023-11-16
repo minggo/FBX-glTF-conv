@@ -14,6 +14,11 @@ let ArtifactPath = '';
 let IncludeDebug = false;
 let Version = '';
 
+function execWithLog(cmd) {
+    const output = execSync(cmd, { stdio: 'inherit' });
+    console.log(output.toString());
+}
+
 function parseArgs() {
     const args = process.argv.slice(2); // Exclude first two arguments: node command and the path of this script.
 
@@ -177,7 +182,7 @@ async function runCMake(buildType) {
 
     // https://www.f-ax.de/dev/2022/11/09/how-to-use-vcpkg-with-universal-binaries-on-macos/
     if (IsMacOS) {
-        execSync(`cmake -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+        execWithLog(`cmake -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
                         -DCMAKE_PREFIX_PATH=./vcpkg/installed/uni-osx
                         -DVCPKG_TARGET_TRIPLET=uni-osx
                         -DCMAKE_OSX_ARCHITECTURES=x86_64;arm64 
@@ -197,13 +202,12 @@ async function runCMake(buildType) {
                         -S. -B${cmakeBuildDir}`);
     }
 
-    const output = execSync(`cmake --build ${cmakeBuildDir} --config ${buildType}`, { stdio: 'inherit' });
-    console.log(output.toString());
+    execWithLog(`cmake --build ${cmakeBuildDir} --config ${buildType}`);
 
     if (IsWindows) {
         execSync(`cmake --build ${cmakeBuildDir} --config ${buildType} --target install`);
     } else {
-        execSync(`cmake --install ${cmakeBuildDir}`);
+        execWithLog(`cmake --install ${cmakeBuildDir}`);
     }
 }
 
