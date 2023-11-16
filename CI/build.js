@@ -197,7 +197,8 @@ async function runCMake(buildType) {
                         -S. -B${cmakeBuildDir}`);
     }
 
-    execSync(`cmake --build ${cmakeBuildDir} --config ${buildType}`);
+    const output = execSync(`cmake --build ${cmakeBuildDir} --config ${buildType}`, { stdio: 'inherit' });
+    console.log(output.toString());
 
     if (IsWindows) {
         execSync(`cmake --build ${cmakeBuildDir} --config ${buildType} --target install`);
