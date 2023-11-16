@@ -27,9 +27,9 @@ jobs:
           Version: $version
           Tag Name: $tagName
           "@
-          echo "version=$version" >> $GITHUB_OUTPUT
-          echo "tag_name=$tagName" >> $GITHUB_OUTPUT
-          echo "release_name=$releaseName" >> $GITHUB_OUTPUT
+          Write-Output "::set-output name=version::$version"
+          Write-Output "::set-output name=tag_name::$tagName"
+          Write-Output "::set-output name=release_name::$releaseName"
       - id: create_release
         uses: actions/create-release@v1
         env:
@@ -59,7 +59,7 @@ jobs:
           #Requires -Version "6.1"
           $osName = if ($IsWindows) { "win32" } elseif ($IsLinux) { "ubuntu" } else { "darwin" }
           $artifactPath = "FBX-glTF-conv-${{ needs.get_release_info_job.outputs.version }}-$osName.zip"
-          echo "artifact_path=$artifactPath" >> $GITHUB_OUTPUT
+          Write-Output "::set-output name=artifact_path::$artifactPath"
       - id: build
         name: Build
         run: CI/GitHubBuild.ps1 -Version "${{ needs.get_release_info_job.outputs.version }}" -ArtifactPath "${{ steps.get_this_release_info.outputs.artifact_path }}"
@@ -94,7 +94,7 @@ jobs:
           #Requires -Version "6.1"
           $osName = if ($IsWindows) { "win32" } elseif ($IsLinux) { "ubuntu" } else { "darwin" }
           $artifactPath = "FBX-glTF-conv-${{ needs.get_release_info_job.outputs.version }}-$osName.zip"
-          echo "artifact_path=$artifactPath" >> $GITHUB_OUTPUT
+          Write-Output "::set-output name=artifact_path::$artifactPath"
       - id: build
         name: Build
         run: node CI/build.js -Version "${{ needs.get_release_info_job.outputs.version }}" -ArtifactPath "${{ steps.get_this_release_info.outputs.artifact_path }}"
@@ -129,7 +129,7 @@ jobs:
   #         #Requires -Version "6.1"
   #         $osName = if ($IsWindows) { "win32" } elseif ($IsLinux) { "ubuntu" } else { "darwin" }
   #         $artifactPath = "FBX-glTF-conv-${{ needs.get_release_info_job.outputs.version }}-$osName.zip"
-  #         echo "artifact_path::$artifactPath" >> $GITHUB_OUTPUT
+  #         Write-Output "::set-output name=artifact_path::$artifactPath"
   #     - id: build
   #       name: Build
   #       run: CI/GitHubBuild.ps1 -Version "${{ needs.get_release_info_job.outputs.version }}" -ArtifactPath "${{ steps.get_this_release_info.outputs.artifact_path }}"
@@ -163,7 +163,7 @@ jobs:
         run: |
           #Requires -Version "6.1"
           $artifactPath = "FBX-glTF-conv-${{ needs.get_release_info_job.outputs.version }}-types.zip"
-          echo "artifact_path=$artifactPath" >> $GITHUB_OUTPUT
+          Write-Output "::set-output name=artifact_path::$artifactPath"
       - id: build
         name: Build
         run: Compress-Archive -Path "types\*" -DestinationPath "${{ steps.get_this_release_info.outputs.artifact_path }}"
