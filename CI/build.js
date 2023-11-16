@@ -95,7 +95,12 @@ async function installFbxSdk() {
         const fbxSdkMacOSTarball = path.join('fbxsdk', 'fbxsdk.pkg.tgz');
         
         console.log('Start downloading fbx');
-        await downloadFile(fbxSdkUrl, fbxSdkMacOSTarball);
+        try {
+            await downloadFile(fbxSdkUrl, fbxSdkMacOSTarball);
+        } catch (e) {
+            console.log('download fbx error: ' + e);
+        }
+        
         console.log('End of downloading fbx');
         execSync(`tar -zxvf ${fbxSdkMacOSTarball} -C fbxsdk`);
         const fbxSdkMacOSPkgFile = fs.readdirSync('fbxsdk').find(file => file.endsWith('.pkg'));
