@@ -146,11 +146,15 @@ installFbxSdk() {
 installDependenciesForMacOS() {
     # Download both x86-64 and arm-64 libs and merge them into a uniform binary.
     # https://www.f-ax.de/dev/2022/11/09/how-to-use-vcpkg-with-universal-binaries-on-macos/
-    dependencies=('libxml2' 'zlib' 'nlohmann-json' 'fmt' 'cppcodec' 'range-v3' 'cxxopts' 'glm' 'doctest' 'utfcpp')
+    dependencies=('libxml2' 'zlib' 'nlohmann-json' 'glm' 'cppcodec' 'range-v3' 'cxxopts' 'doctest' 'utfcpp')
     for libName in "${dependencies[@]}"; do
         ./vcpkg/vcpkg install --triplet=x64-osx "$libName"
         ./vcpkg/vcpkg install --triplet=arm64-osx "$libName"
     done
+    # install specific fmt version
+    ./vcpkg/vcpkg install --triplet=x64-osx fmt:"9.1.0#1"
+    ./vcpkg/vcpkg install --triplet=arm64-osx fmt:"9.1.0#1"
+
     python3 ./CI/lipo-dir-merge.py ./vcpkg/installed/arm64-osx ./vcpkg/installed/x64-osx ./vcpkg/installed/uni-osx
 }
 
