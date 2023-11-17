@@ -152,8 +152,8 @@ installDependenciesForMacOS() {
         ./vcpkg/vcpkg install --triplet=arm64-osx "$libName"
     done
     # install specific fmt version
-    ./vcpkg/vcpkg install --triplet=x64-osx --version=9.1.0 fmt
-    ./vcpkg/vcpkg install --triplet=arm64-osx --version=9.1.0 fmt
+    ./vcpkg/vcpkg install --triplet=x64-osx fmt
+    ./vcpkg/vcpkg install --triplet=arm64-osx fmt
 
     python3 ./CI/lipo-dir-merge.py ./vcpkg/installed/arm64-osx ./vcpkg/installed/x64-osx ./vcpkg/installed/uni-osx
 }
