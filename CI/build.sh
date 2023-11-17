@@ -80,6 +80,8 @@ downloadFile() {
     dest="$2"
     
     file=$(basename "$dest")
+    dir=$(dirname "$dest")
+    mkdir -p "$dirname"
     
     while true; do
         curl -L -o "$file" "$url"
