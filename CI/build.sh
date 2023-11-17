@@ -108,7 +108,7 @@ installFbxSdk() {
         fbxSdkVersion='2020.2.1'
         fbxSdkMacOSTarball='./fbxsdk/fbxsdk.pkg.tgz'
 
-        # downloadFile "$fbxSdkUrl" "$fbxSdkMacOSTarball"
+        downloadFile "$fbxSdkUrl" "$fbxSdkMacOSTarball"
 
         tar -zxvf "$fbxSdkMacOSTarball" -C fbxsdk
         fbxSdkMacOSPkgFile=$(find fbxsdk -name '*.pkg' -type f)
