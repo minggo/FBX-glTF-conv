@@ -232,8 +232,7 @@ build() {
     fi
     
     if [ -n "$ArtifactPath" ]; then
-        archivePath="$ArtifactPath/archive.zip"
-        zip -r $archivePath $cmakeInstallPrefix
+        zip -r $cmakeInstallPrefix $archivePath
     fi
 }
 
