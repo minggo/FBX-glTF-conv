@@ -166,7 +166,7 @@ installDependencies() {
     if [ "$IsMacOS" = true ]; then
         installDependenciesForMacOS
     else
-        ./vcpkg/vcpkg install
+        installDependenciesForOthers
     fi
 }
 
@@ -232,7 +232,7 @@ build() {
     fi
     
     if [ -n "$ArtifactPath" ]; then
-        zip -r $cmakeInstallPrefix $archivePath
+        zip -r $archivePath $cmakeInstallPrefix
     fi
 }
 
