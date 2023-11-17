@@ -84,7 +84,7 @@ downloadFile() {
     mkdir -p "$dirname"
     
     while true; do
-        curl -L -o "$file" "$url"
+        curl -L --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" -o "$file" "$url"
         ret=$?
         if [ $ret -eq 0 ]; then
             mv "$file" "$dest"
@@ -106,7 +106,7 @@ installFbxSdk() {
     elif [ "$IsMacOS" = true ]; then
         fbxSdkUrl='https://www.autodesk.com/content/dam/autodesk/www/adn/fbx/2020-2-1/fbx202021_fbxsdk_clang_mac.pkg.tgz'
         fbxSdkVersion='2020.2.1'
-        fbxSdkMacOSTarball=fbxsdk/fbxsdk.pkg.tgz
+        fbxSdkMacOSTarball='./fbxsdk/fbxsdk.pkg.tgz'
 
         downloadFile "$fbxSdkUrl" "$fbxSdkMacOSTarball"
 
@@ -231,6 +231,6 @@ build() {
 parseArgs "$@"
 printEnvironments
 installFbxSdk
-installVcpkg
-installDependencies
-build
+#installVcpkg
+#installDependencies
+#build
