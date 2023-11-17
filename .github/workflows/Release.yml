@@ -62,8 +62,8 @@ jobs:
           Write-Output "::set-output name=artifact_path::$artifactPath"
       - id: build
         name: Build
-        run: CI/GitHubBuild.ps1 -Version "${{ needs.get_release_info_job.outputs.version }}" -ArtifactPath "${{ steps.get_this_release_info.outputs.artifact_path }}"
-        shell: pwsh
+        run: CI/build.sh -Version "${{ needs.get_release_info_job.outputs.version }}" -ArtifactPath "${{ steps.get_this_release_info.outputs.artifact_path }}"
+        shell: bash
       - id: upload-release-asset
         name: Upload Release Asset
         uses: actions/upload-release-asset@v1

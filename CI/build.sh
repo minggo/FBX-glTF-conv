@@ -146,16 +146,20 @@ installFbxSdk() {
 installDependenciesForMacOS() {
     # Download both x86-64 and arm-64 libs and merge them into a uniform binary.
     # https://www.f-ax.de/dev/2022/11/09/how-to-use-vcpkg-with-universal-binaries-on-macos/
-    dependencies=('libxml2' 'zlib' 'nlohmann-json' 'glm' 'cppcodec' 'range-v3' 'cxxopts' 'doctest' 'utfcpp')
+    dependencies=('libxml2' 'zlib' 'fmt' 'nlohmann-json' 'glm' 'cppcodec' 'range-v3' 'cxxopts' 'doctest' 'utfcpp')
     for libName in "${dependencies[@]}"; do
         ./vcpkg/vcpkg install --triplet=x64-osx "$libName"
         ./vcpkg/vcpkg install --triplet=arm64-osx "$libName"
     done
-    # install specific fmt version
-    ./vcpkg/vcpkg install --triplet=x64-osx fmt
-    ./vcpkg/vcpkg install --triplet=arm64-osx fmt
 
     python3 ./CI/lipo-dir-merge.py ./vcpkg/installed/arm64-osx ./vcpkg/installed/x64-osx ./vcpkg/installed/uni-osx
+}
+
+installDependenciesForOthers() {
+    dependencies=('libxml2' 'zlib' 'fmt' 'nlohmann-json' 'glm' 'cppcodec' 'range-v3' 'cxxopts' 'doctest' 'utfcpp')
+    for libName in "${dependencies[@]}"; do
+        ./vcpkg/vcpkg install "$libName"
+    done
 }
 
 installDependencies() {
@@ -194,13 +198,13 @@ runCMake() {
             "${defineVersion}" \
             -S. -B"${cmakeBuildDir}"
     else
-        cmake -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake \
-                -DCMAKE_BUILD_TYPE=$buildType \
-                -DCMAKE_INSTALL_PREFIX=$cmakeInstallPrefix/$buildType \
-                -DFbxSdkHome:STRING=$fbxSdkHome \
-                -DPOLYFILLS_STD_FILESYSTEM=$polyfillsStdFileSystem \
-                $defineVersion \
-                -S. -B$cmakeBuildDir
+        cmake -DCMAKE_TOOLCHAIN_FILE='vcpkg/scripts/buildsystems/vcpkg.cmake' \
+                -DCMAKE_BUILD_TYPE=$'{buildType}' \
+                -DCMAKE_INSTALL_PREFIX='${cmakeInstallPrefix}/${buildType}' \
+                -DFbxSdkHome:STRING='${fbxSdkHome}' \
+                -DPOLYFILLS_STD_FILESYSTEM='${polyfillsStdFileSystem}' \
+                '${defineVersion}' \
+                -S. -B'${cmakeBuildDir}'
     fi
 
     cmake --build $cmakeBuildDir --config $buildType
