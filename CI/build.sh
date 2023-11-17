@@ -232,6 +232,7 @@ build() {
     fi
     
     if [ -n "$ArtifactPath" ]; then
+        echo 'zip -r ${archivePath} ${cmakeInstallPrefix}'
         zip -r $archivePath $cmakeInstallPrefix
     fi
 }
