@@ -108,12 +108,12 @@ installFbxSdk() {
         fbxSdkVersion='2020.2.1'
         fbxSdkMacOSTarball='./fbxsdk/fbxsdk.pkg.tgz'
 
-        downloadFile "$fbxSdkUrl" "$fbxSdkMacOSTarball"
+        # downloadFile "$fbxSdkUrl" "$fbxSdkMacOSTarball"
 
         tar -zxvf "$fbxSdkMacOSTarball" -C fbxsdk
         fbxSdkMacOSPkgFile=$(find fbxsdk -name '*.pkg' -type f)
         echo "FBX SDK MacOS pkg: $fbxSdkMacOSPkgFile"
-        sudo installer -pkg "fbxsdk/$fbxSdkMacOSPkgFile" -target /
+        sudo installer -pkg "$fbxSdkMacOSPkgFile" -target /
         ln -s "/Applications/Autodesk/FBX SDK/$fbxSdkVersion" fbxsdk/Home
     elif [ "$IsLinux" = true ]; then
         fbxSdkUrl='https://www.autodesk.com/content/dam/autodesk/www/adn/fbx/2020-2-1/fbx202021_fbxsdk_linux.tar.gz'
@@ -231,6 +231,6 @@ build() {
 parseArgs "$@"
 printEnvironments
 installFbxSdk
-#installVcpkg
-#installDependencies
-#build
+installVcpkg
+installDependencies
+build
