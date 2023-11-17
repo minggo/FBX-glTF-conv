@@ -178,16 +178,17 @@ runCMake() {
     fi
 
     if [ "$IsMacOS" = true ]; then
-        cmake -DCMAKE_TOOLCHAIN_FILE='vcpkg/scripts/buildsystems/vcpkg.cmake' \
-            -DCMAKE_PREFIX_PATH='./vcpkg/installed/uni-osx' \
-            -DVCPKG_TARGET_TRIPLET='uni-osx' \
-            -DCMAKE_OSX_ARCHITECTURES='x86_64;arm64' \
-            -DCMAKE_BUILD_TYPE='$buildType' \
-            -DCMAKE_INSTALL_PREFIX='$cmakeInstallPrefix/$buildType' \
-            -DFbxSdkHome:STRING='$fbxSdkHome' \
-            -DPOLYFILLS_STD_FILESYSTEM=$polyfillsStdFileSystem \
-            $defineVersion \
-            -S. -B$cmakeBuildDir
+        echo "fbx home is $fbxSdkHome"
+        cmake -DCMAKE_TOOLCHAIN_FILE="vcpkg/scripts/buildsystems/vcpkg.cmake" \
+            -DCMAKE_PREFIX_PATH="./vcpkg/installed/uni-osx" \
+            -DVCPKG_TARGET_TRIPLET="uni-osx" \
+            -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" \
+            -DCMAKE_BUILD_TYPE="${buildType}" \
+            -DCMAKE_INSTALL_PREFIX="${cmakeInstallPrefix/$buildType}" \
+            -DFbxSdkHome:STRING="${fbxSdkHome}" \
+            -DPOLYFILLS_STD_FILESYSTEM="${polyfillsStdFileSystem}" \
+            "${defineVersion}" \
+            -S. -B"${cmakeBuildDir}"
     else
         cmake -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake \
                 -DCMAKE_BUILD_TYPE=$buildType \
@@ -201,9 +202,9 @@ runCMake() {
     cmake --build $cmakeBuildDir --config $buildType
 
     if [ "$IsWindows" = true ]; then
-        execWithLog "cmake --build $cmakeBuildDir --config $buildType --target install"
+        cmake --build $cmakeBuildDir --config $buildType --target install
     else
-        execWithLog "cmake --install $cmakeBuildDir"
+        cmake --install $cmakeBuildDir
     fi
 }
 
@@ -224,7 +225,7 @@ build() {
     
     if [ -n "$ArtifactPath" ]; then
         archivePath="$ArtifactPath/archive.zip"
-        execWithLog "zip -r $archivePath $cmakeInstallPrefix"
+        zip -r $archivePath $cmakeInstallPrefix
     fi
 }
 
