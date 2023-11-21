@@ -81,7 +81,7 @@ downloadFile() {
     
     file=$(basename "$dest")
     dir=$(dirname "$dest")
-    mkdir -p "$dirname"
+    mkdir -p "$dir"
     
     while true; do
         curl -L --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" -o "$file" "$url"
@@ -99,10 +99,20 @@ installFbxSdk() {
 
     if [ "$IsWindows" = true ]; then
         fbxSdkUrl='https://www.autodesk.com/content/dam/autodesk/www/adn/fbx/2020-2-1/fbx202021_fbxsdk_vs2019_win.exe'
-        fbxSdkWindowsInstaller=fbxsdk/fbxsdk.exe
+        fbxSdkWindowsInstaller="fbxsdk\\fbxsdk.exe"
 
         downloadFile "$fbxSdkUrl" "$fbxSdkWindowsInstaller"
-        ./fbxsdk/fbxsdk.exe /S /D="$fbxSdkHome"
+        
+        fbxSdkHome_unix=$fbxSdkHome
+        echo fbxSdkHome_unix=$fbxSdkHome_unix
+
+        fbxSdkHome=$(cygpath -w $fbxSdkHome_unix)
+
+        echo fbxSdkHome=$fbxSdkHome
+
+        cmd "/C CI\install-fbx-sdk.bat $fbxSdkWindowsInstaller $fbxSdkHome"
+        echo "Installation finished($fbxSdkHome)."
+
     elif [ "$IsMacOS" = true ]; then
         fbxSdkUrl='https://www.autodesk.com/content/dam/autodesk/www/adn/fbx/2020-2-1/fbx202021_fbxsdk_clang_mac.pkg.tgz'
         fbxSdkVersion='2020.2.1'
