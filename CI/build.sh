@@ -110,7 +110,7 @@ installFbxSdk() {
 
         echo fbxSdkHome=$fbxSdkHome
 
-        cmd "/C install-fbx-sdk.bat $fbxSdkWindowsInstaller $fbxSdkHome"
+        cmd "/C CI\install-fbx-sdk.bat $fbxSdkWindowsInstaller $fbxSdkHome"
         echo "Installation finished($fbxSdkHome)."
 
     elif [ "$IsMacOS" = true ]; then
