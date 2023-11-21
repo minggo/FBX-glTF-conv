@@ -208,13 +208,13 @@ runCMake() {
             "${defineVersion}" \
             -S. -B"${cmakeBuildDir}"
     else
-        cmake -DCMAKE_TOOLCHAIN_FILE='vcpkg/scripts/buildsystems/vcpkg.cmake' \
-                -DCMAKE_BUILD_TYPE=$'{buildType}' \
-                -DCMAKE_INSTALL_PREFIX='${cmakeInstallPrefix}/${buildType}' \
-                -DFbxSdkHome:STRING='${fbxSdkHome}' \
-                -DPOLYFILLS_STD_FILESYSTEM='${polyfillsStdFileSystem}' \
-                '${defineVersion}' \
-                -S. -B'${cmakeBuildDir}'
+        cmake -DCMAKE_TOOLCHAIN_FILE="vcpkg/scripts/buildsystems/vcpkg.cmake" \
+                -DCMAKE_BUILD_TYPE=$"{buildType}" \
+                -DCMAKE_INSTALL_PREFIX="${cmakeInstallPrefix}/${buildType}" \
+                -DFbxSdkHome:STRING="${fbxSdkHome}" \
+                -DPOLYFILLS_STD_FILESYSTEM="${polyfillsStdFileSystem}" \
+                "${defineVersion}" \
+                -S. -B"${cmakeBuildDir}"
     fi
 
     cmake --build $cmakeBuildDir --config $buildType
