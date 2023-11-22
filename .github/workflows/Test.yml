@@ -4,7 +4,7 @@ on: [pull_request]
 
 jobs:
   test:
-    name: Test
+    name: Test on Windows
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
@@ -33,9 +33,11 @@ jobs:
         name: Checkout
   
       - name: Build
+        uses: actions/setup-xcode@v3
+        with: 
+          version: '14.3.1'
         shell: bash
         run: |
-          sudo xcode-select --switch /Applications/Xcode_14.3.1.app
           CI/build.sh
 
       - name: Upload Artifacts
